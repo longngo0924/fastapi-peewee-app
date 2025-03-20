@@ -1,6 +1,7 @@
 from app.models.user import User
 
 
-def run(migrator, migrate):
+def run(db, migrate):
     # Create tables for initial models
-    User.create_table()
+    if not User.table_exists():
+        User.create_table()
