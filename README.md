@@ -10,6 +10,8 @@ A modern RESTful API built with FastAPI and Peewee ORM using PostgreSQL as the d
 - **PostgreSQL**: Robust relational database for production use
 - **Migration System**: Database versioning with custom migration scripts
 - **Testing**: In-memory SQLite database for fast test execution
+- **Docker**: Containerized deployment for consistent environments
+- **FastAPI CLI**: Application management using the official CLI tool
 
 ## Project Structure
 
@@ -26,6 +28,7 @@ A modern RESTful API built with FastAPI and Peewee ORM using PostgreSQL as the d
 │   └── versions/         # Individual migration versions
 ├── tests/                # Test suite
 ├── .env                  # Environment variables
+├── Dockerfile            # Docker container definition
 └── requirements.txt      # Project dependencies
 ```
 
@@ -36,8 +39,11 @@ A modern RESTful API built with FastAPI and Peewee ORM using PostgreSQL as the d
 - Python 3.8+
 - PostgreSQL
 - Virtual environment (recommended)
+- Docker (optional)
 
 ### Installation
+
+#### Option 1: Standard Installation
 
 1. Clone the repository:
    ```bash
@@ -70,18 +76,64 @@ A modern RESTful API built with FastAPI and Peewee ORM using PostgreSQL as the d
    python -m migrations.migrate 001_initial
    ```
 
+#### Option 2: Docker Installation
+
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/yourusername/fastapi_peewee_app.git
+   cd fastapi_peewee_app
+   ```
+
+2. Build the Docker image:
+   ```bash
+   docker build -t fastapi-peewee-app .
+   ```
+
+3. Run the container:
+   ```bash
+   docker run -d \
+     --name fastapi-app \
+     -p 8000:8000 \
+     -e DATABASE_URL=postgresql://postgres:password@host.docker.internal:5432/fastapi_app \
+     -e SECRET_KEY=your-secret-key \
+     fastapi-peewee-app
+   ```
+
+   Note: 
+   - Replace `postgres:password` with your PostgreSQL credentials
+   - `host.docker.internal` refers to the host machine's localhost from inside the container
+   - Make sure PostgreSQL is running on your host machine and is configured to accept connections
+
 ### Running the Application
 
-Start the development server:
+#### Standard Method
+
+Start the development server using uvicorn:
 
 ```bash
 uvicorn app.main:app --reload
+```
+
+Or use the FastAPI CLI:
+
+```bash
+fastapi run app/main.py --reload
+```
+
+#### Using Docker
+
+To run the application with Docker:
+
+```bash
+docker run -d -p 8000:8000 fastapi-peewee-app
 ```
 
 The API will be available at `http://127.0.0.1:8000`.
 API documentation is available at `http://127.0.0.1:8000/docs`.
 
 ## Testing
+
+### Standard Method
 
 Run the test suite:
 
@@ -93,6 +145,14 @@ For test coverage:
 
 ```bash
 pytest --cov=app
+```
+
+### With Docker
+
+To run tests in a Docker container:
+
+```bash
+docker run --rm fastapi-peewee-app pytest
 ```
 
 ## API Endpoints
